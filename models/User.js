@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
-
+import {Schema} from 'mongoose';
 const userSchema = new mongoose.Schema({
   firstname: { type: String, required: true },
   lastname: { type: String, required: true },
@@ -10,7 +10,12 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ['user', 'admin'],
     default: 'user'
-  }// 'admin' for admin users
+  },// 'admin' for admin users
+  // Add the teams field
+  teams: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Team' // Ensure this matches your Team model name
+  }],
 });
 
 // Hash password before saving

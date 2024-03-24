@@ -8,6 +8,9 @@ import CreateLeagueForm from './pages/createleague';
 import LeaguesPage from './pages/leagues';
 import AddUserToLeague from './pages/addusertoleague'; // Assuming you've created this component
 import DetailedLeaguePage from './pages/leaguedetails';
+import CreateTeamPage from './pages/createteam';
+import Navbar from './components/navbar';
+
 function App() {
   const [role, setRole] = useState('');
 
@@ -24,7 +27,9 @@ function App() {
   };
 
   return (
+   
     <Router>
+     <Navbar/>
       <Routes>
         <Route path="/login" element={<Login onLogin={(userRole) => setRole(userRole)} />} />
         <Route path="/signup" element={<Signup />} />
@@ -35,8 +40,8 @@ function App() {
         <Route path="/createleague" element={
           <CreateLeagueForm />
         } />
-        <Route path="/createleague" element={
-          <CreateLeagueForm />
+        <Route path="/createteam" element={
+          <CreateTeamPage />
         } />
         <Route path="/leagues/:leagueName" element={<DetailedLeaguePage />} />
         <Route path="/leagues" element={<LeaguesPage role={role} />} />

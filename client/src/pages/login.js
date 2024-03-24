@@ -1,31 +1,41 @@
 import React, { useState } from 'react';
 import { Box, TextField, Button, Typography, Alert } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useUser } from '../components/userContext'; // Ensure this import path matches your file structure
 
-function Login({ onLogin  }) {
+function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const navigate = useNavigate();
+  const { login } = useUser(); // Assuming your context provides a login function
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch('/api/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    });
+    try {
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
 
-    if (response.ok) {
+      if (!response.ok) {
+        // If the server response is not ok, it means login failed.
+        const { message } = await response.json();
+        setErrorMsg(message || 'Failed to log in. Please check your credentials.');
+        return;
+      }
+
       const { token, user } = await response.json();
-      localStorage.setItem('token', token);
-      localStorage.setItem('role', user.role);
-      onLogin (user.role); // Optionally update role in the parent component's state
+      // Use the login function from the context to update the global state
+      login(token, user);
+
       console.log('Login successful');
-      user.role === 'admin' ? navigate('/admin') : navigate('/');
-      // Implement redirection or further actions after successful login
-    } else {
-      setErrorMsg('Failed to log in. Please check your credentials.');
+      // Redirect based on user role
+      navigate(user.role === 'admin' ? '/admin' : '/');
+    } catch (error) {
+      console.error('Login error:', error);
+      setErrorMsg('An error occurred during login.');
     }
   };
 

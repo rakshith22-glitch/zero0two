@@ -136,5 +136,47 @@ router.get('/users/:userId', async (req, res) => {
   });
   
   
+  router.post('/teams', async (req, res) => {
+    const { name, players, createdBy } = req.body;
+  
+    try {
+      const newTeam = new Team({
+        name,
+        players, // Array of player IDs
+        createdBy // ID of the user creating the team
+      });
+  
+      await newTeam.save();
+      res.status(201).send(newTeam);
+    } catch (error) {
+      res.status(400).send({ message: error.message });
+    }
+  });
+
+
+  router.post('/teams/:teamId/join', async (req, res) => {
+    const { userId } = req.body; // Assume the user's ID is sent in the request body
+    const { teamId } = req.params;
+  
+    try {
+      // Add the team to the user's teams array
+      const user = await User.findById(userId);
+      if (!user.teams.includes(teamId)) {
+        user.teams.push(teamId);
+        await user.save();
+      }
+  
+      // Optionally, also add the user to the team's players array
+      const team = await Team.findById(teamId);
+      if (!team.players.includes(userId)) {
+        team.players.push(userId);
+        await team.save();
+      }
+  
+      res.send({ message: 'User added to team successfully' });
+    } catch (error) {
+      res.status(400).send({ message: 'Error adding user to team' });
+    }
+  });
 
 export default router;
