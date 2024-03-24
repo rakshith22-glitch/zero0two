@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Card, Grid, CardContent, Typography, CardActions, Button, List, ListItem, ListItemText, CircularProgress } from '@mui/material';
+import { Box, Card, Grid, CardContent, Typography, List, ListItem, CircularProgress } from '@mui/material';
 
 const Teams = () => {
     const [teams, setTeams] = useState([]);

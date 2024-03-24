@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button, AppBar, Toolbar, Typography } from '@mui/material';
+import { Button, AppBar, Toolbar, Typography } from '@mui/material';
 import { useUser } from './userContext'; // Ensure the import path is correct
 import { useNavigate } from 'react-router-dom';
 

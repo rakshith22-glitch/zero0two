@@ -21,7 +21,7 @@ const LeaguesPage = ({ role }) => {
       await fetchPlayers();
     };
     fetchLeaguesAndPlayers();
-  }, [role]);
+  });
 
   const fetchLeagues = async () => {
     try {
