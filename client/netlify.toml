@@ -1,7 +1,8 @@
 [build]
 command = "npm run build"
-publish= "/build"
-base= "/"
+publish = "build" # Changed from "/build" to "build"
+
+# Removed the base directory setting as it's typically not needed unless your project structure requires it
 
 [[redirects]]
 from = "/*"
