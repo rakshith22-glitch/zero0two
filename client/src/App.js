@@ -10,6 +10,7 @@ import AddUserToLeague from './pages/addusertoleague'; // Assuming you've create
 import DetailedLeaguePage from './pages/leaguedetails';
 import CreateTeamPage from './pages/createteam';
 import Navbar from './components/navbar';
+import Teams from './pages/teams';
 
 function App() {
   const [role, setRole] = useState('');
@@ -42,6 +43,9 @@ function App() {
         } />
         <Route path="/createteam" element={
           <CreateTeamPage />
+        } />
+        <Route path="/teams" element={
+          <Teams />
         } />
         <Route path="/leagues/:leagueName" element={<DetailedLeaguePage />} />
         <Route path="/leagues" element={<LeaguesPage role={role} />} />

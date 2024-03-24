@@ -1,6 +1,7 @@
 import express from 'express';
 import User from '../models/User.js';
 import League from '../models/League.js';
+import Team from '../models/Team.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
@@ -106,7 +107,7 @@ router.get('/leagues/by-name', async (req, res) => {
 
         // Use findOne to search for a single document by leagueName
         const leagueDetails = await League.findOne({ leagueName: leagueName });
-       
+
 
         if (!leagueDetails) {
             return res.status(404).send({ message: 'League not found.' });
@@ -124,59 +125,89 @@ router.get('/leagues/by-name', async (req, res) => {
 
 router.get('/users/:userId', async (req, res) => {
     try {
-      const user = await User.findById(req.params.userId);
-      if (!user) {
-        return res.status(404).send({ message: 'User not found.' });
-      }
-      res.json(user);
+        const user = await User.findById(req.params.userId);
+        if (!user) {
+            return res.status(404).send({ message: 'User not found.' });
+        }
+        res.json(user);
     } catch (error) {
-      console.error('Error fetching user details:', error);
-      res.status(500).send({ message: 'Failed to fetch user details.' });
+        console.error('Error fetching user details:', error);
+        res.status(500).send({ message: 'Failed to fetch user details.' });
     }
-  });
-  
-  
-  router.post('/teams', async (req, res) => {
+});
+
+
+router.post('/teams', async (req, res) => {
     const { name, players, createdBy } = req.body;
-  
+
     try {
-      const newTeam = new Team({
-        name,
-        players, // Array of player IDs
-        createdBy // ID of the user creating the team
-      });
-  
-      await newTeam.save();
-      res.status(201).send(newTeam);
+        const newTeam = new Team({
+            name,
+            players, // Array of player IDs
+            createdBy // ID of the user creating the team
+        });
+
+        await newTeam.save();
+        res.status(201).send(newTeam);
     } catch (error) {
-      res.status(400).send({ message: error.message });
+        res.status(400).send({ message: error.message });
     }
-  });
+});
 
+router.get('/getteams', async (req, res) => {
+    try {
+        const teams = await Team.find(); // Fetch all teams
+        res.json(teams);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
 
-  router.post('/teams/:teamId/join', async (req, res) => {
-    const { userId } = req.body; // Assume the user's ID is sent in the request body
+router.post('/teams/:teamId/join', async (req, res) => {
+    const { userId } = req.body;
     const { teamId } = req.params;
-  
+
     try {
-      // Add the team to the user's teams array
-      const user = await User.findById(userId);
-      if (!user.teams.includes(teamId)) {
-        user.teams.push(teamId);
-        await user.save();
-      }
-  
-      // Optionally, also add the user to the team's players array
-      const team = await Team.findById(teamId);
-      if (!team.players.includes(userId)) {
-        team.players.push(userId);
-        await team.save();
-      }
-  
-      res.send({ message: 'User added to team successfully' });
+        // Add the team to the user's teams array
+        const user = await User.findById(userId);
+        if (!user.teams.includes(teamId)) {
+            user.teams.push(teamId);
+            await user.save();
+        }
+
+        // Add the user to the team's players array and fetch updated team details
+        const team = await Team.findById(teamId);
+        if (!team.players.includes(userId)) {
+            team.players.push(userId);
+            await team.save();
+        }
+
+        // Fetch updated team details including player information
+        const updatedTeam = await Team.findById(teamId).populate('players', 'firstname', 'lastname'); // Customize 'name' to the fields you want
+
+        res.json({ message: 'User added to team successfully', team: updatedTeam });
     } catch (error) {
-      res.status(400).send({ message: 'Error adding user to team' });
+        res.status(400).send({ message: 'Error adding user to team' });
     }
-  });
+});
+
+
+router.get('/teams/:teamId/details', async (req, res) => {
+    const { teamId } = req.params;
+
+    try {
+        const team = await Team.findById(teamId).populate('players'); // Populating 'players' array
+        if (!team) {
+            return res.status(404).send({ message: 'Team not found' });
+        }
+
+        // Assuming the population was successful and 'team' now includes detailed 'players' info
+        res.json(team);
+    } catch (error) {
+        console.error('Error fetching team details:', error);
+        res.status(400).send({ message: 'Error fetching team details' });
+    }
+});
+
 
 export default router;
