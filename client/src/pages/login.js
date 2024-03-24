@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, TextField, Button, Typography, Alert } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../components/userContext'; // Ensure this import path matches your file structure
 
 function Login() {
@@ -86,7 +86,8 @@ function Login() {
         >
           Log In
         </Button>
-        {errorMsg && <Alert severity="error">{errorMsg}</Alert>}
+        {errorMsg && <Alert severity="error">{errorMsg} <Link to="/signup"> click here to signup</Link> </Alert>
+         }
       </Box>
     </Box>
   );

@@ -11,9 +11,8 @@ function Admin() {
       <li> <Link to="/signup">Signup</Link> </li>
       <li> <Link to="/leagues"> leagues </Link> </li>
       <li><Link to="/createteam"> createteam </Link> </li>
-      <li> <Link to="/createleague"> createleague </Link>
-
-      </li>
+      <li> <Link to="/createleague"> createleague </Link></li>
+      <li> <Link to="/teams"> teams </Link></li>
     </div>
   );
 }
