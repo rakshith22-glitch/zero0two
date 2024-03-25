@@ -18,12 +18,13 @@ app.use(express.json()); // Middleware to parse JSON bodies
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+// Serve the static files from the React app
 app.use(express.static(path.join(__dirname, 'client/build')));
 
 // Use authRoutes for authentication paths
 app.use('/api', authRoutes);
 
-// Serve the static files from the React app
+// Route for handling any other requests and serving the React app
 app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
 });
@@ -33,6 +34,7 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
   .then(() => console.log("MongoDB connection established"))
   .catch((error) => console.error("MongoDB connection failed:", error.message));
 
+// Start the server
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
