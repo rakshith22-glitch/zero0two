@@ -1,4 +1,13 @@
+# netlify.toml
+[build]
+  # Directory to publish (this should be the folder where your build script places its output)
+  publish = "build/"
+
+  # Your build command (for React apps, typically npm run build)
+  command = "npm run build"
+
+# Redirects all requests to the main index.html since React apps are single-page apps
 [[redirects]]
-from = "/*"
-to = "/index.html"
-status = 200
+  from = "/*"
+  to = "/index.html"
+  status = 200
