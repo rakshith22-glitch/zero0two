@@ -7,7 +7,7 @@ const LeaguePlayers = ({ players }) => {
   useEffect(() => {
     const fetchPlayerDetails = async () => {
       const playerInfoPromises = players.map(playerId =>
-        fetch(`/api/users/${playerId}`).then(response => response.json())
+        fetch(`${process.env.REACT_APP_API_URL}/api/users/${playerId}`).then(response => response.json())
       );
 
       try {

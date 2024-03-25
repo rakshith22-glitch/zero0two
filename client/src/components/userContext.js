@@ -22,7 +22,7 @@ export const UserProvider = ({ children }) => {
       if (!storedToken) return;
 
       try {
-        const response = await fetch('/api/validateToken', {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/validateToken`, {
           method: 'GET', // Assuming a GET request; adjust as needed
           headers: new Headers({
             'Authorization': `Bearer ${storedToken}`,

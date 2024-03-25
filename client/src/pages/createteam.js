@@ -17,7 +17,7 @@ const CreateTeamPage = () => {
     useEffect(() => {
         const fetchPlayers = async () => {
             try {
-                const response = await fetch('/api/users');
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users`);
                 if (!response.ok) throw new Error('Failed to fetch players');
                 const data = await response.json();
                 setPlayers(data);
@@ -41,7 +41,7 @@ const CreateTeamPage = () => {
         };
 
         try {
-            const response = await fetch('/api/teams', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/teams`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(teamData),

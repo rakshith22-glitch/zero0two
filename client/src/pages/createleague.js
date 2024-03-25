@@ -29,7 +29,7 @@ const CreateLeagueForm = () => {
 //   };
 
 const onSubmit = (values, { setSubmitting, resetForm }) => {
-    fetch('/api/leagues', {
+    fetch(`${process.env.REACT_APP_API_URL}/api/leagues`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

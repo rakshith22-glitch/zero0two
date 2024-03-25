@@ -9,13 +9,13 @@ const Teams = () => {
         const fetchTeamsAndPlayers = async () => {
             setLoading(true);
             try {
-                const response = await fetch('/api/getteams');
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/getteams`);
                 if (!response.ok) throw new Error('Could not fetch teams');
                 let teamsData = await response.json();
 
                 // Fetch players details for each team concurrently
                 const teamsWithPlayers = await Promise.all(teamsData.map(async (team) => {
-                    const playersResponse = await fetch(`/api/teams/${team._id}/details`);
+                    const playersResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/teams/${team._id}/details`);
                     const playersData = await playersResponse.json();
                     return { ...team, players: playersData.players };
                 }));

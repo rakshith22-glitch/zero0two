@@ -10,7 +10,7 @@ const AddUserToLeague = () => {
 
   useEffect(() => {
     // Fetch users from the backend using Fetch API
-    fetch('/api/users')
+    fetch(`${process.env.REACT_APP_API_URL}/api/users`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -23,7 +23,7 @@ const AddUserToLeague = () => {
 
   const handleAddUser = () => {
     // Make an API call to add the selected user to the league using Fetch API
-    fetch(`/api/leagues/${leagueId}/users`, {
+    fetch(`${process.env.REACT_APP_API_URL}/api/leagues/${leagueId}/users`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

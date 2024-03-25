@@ -25,7 +25,7 @@ const LeaguesPage = ({ role }) => {
 
   const fetchLeagues = async () => {
     try {
-      const response = await fetch('/api/leagues');
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/leagues`);
       const data = await response.json();
       setLeagues(data);
     } catch (error) {
@@ -36,7 +36,7 @@ const LeaguesPage = ({ role }) => {
   const fetchPlayers = async () => {
     if (role === 'admin') {
       try {
-        const response = await fetch('/api/users');
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users`);
         const data = await response.json();
         setPlayers(data);
       } catch (error) {
@@ -50,7 +50,7 @@ const LeaguesPage = ({ role }) => {
     if (!player) return;
 
     try {
-      const response = await fetch(`/api/leagues/${leagueId}/add-player`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/leagues/${leagueId}/add-player`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ playerId: player._id }),
