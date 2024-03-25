@@ -11,51 +11,62 @@ import DetailedLeaguePage from './pages/leaguedetails';
 import CreateTeamPage from './pages/createteam';
 import Navbar from './components/navbar';
 import Teams from './pages/teams';
-
+import { useUser } from './components/userContext';
+import { UserProvider } from './components/userContext'; 
 function App() {
-  const [role, setRole] = useState('');
-
-  useEffect(() => {
-    // Simulate checking token and setting role
-    const storedRole = localStorage.getItem('role');
-    if (storedRole) {
-      setRole(storedRole);
-    }
-  }, []);
 
   const PrivateRoute = ({ children, allowedRoles }) => {
-    return allowedRoles.includes(role) ? children : <Navigate to="/" />;
-  };
+    const { user } = useUser(); // Destructure to get user from context
 
+    return user && allowedRoles.includes(user.role) ? children : <Navigate to="/" />;
+  };
   return (
-   
+
     <Router>
-     <Navbar/>
-      <Routes>
-        <Route path="/login" element={<Login onLogin={(userRole) => setRole(userRole)} />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/" element={<HomePage />} />
-        <Route path="/admin" element={
-          <Admin />
-        } />
-        <Route path="/createleague" element={
-          <CreateLeagueForm />
-        } />
-        <Route path="/createteam" element={
-          <CreateTeamPage />
-        } />
-        <Route path="/teams" element={
-          <Teams />
-        } />
-        <Route path="/leagues/:leagueName" element={<DetailedLeaguePage />} />
-        <Route path="/leagues" element={<LeaguesPage role={role} />} />
-        <Route path="/leagues/:leagueId/add-users" element={
-          <PrivateRoute allowedRoles={['admin']}>
-            <AddUserToLeague />
-          </PrivateRoute>
-        } />
-        {/* Additional routes as needed */}
-      </Routes>
+      <UserProvider>
+        <Navbar />
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/admin" element={
+            <PrivateRoute allowedRoles={['admin']}>
+              <Admin />
+            </PrivateRoute>
+          } />
+          <Route path="/createleague" element={
+            <PrivateRoute allowedRoles={['admin']}>
+              <CreateLeagueForm />
+            </PrivateRoute>
+          } />
+          <Route path="/createteam" element={
+            <PrivateRoute allowedRoles={['admin']}>
+              <CreateTeamPage />
+            </PrivateRoute>
+          } />
+          <Route path="/teams" element={
+            <PrivateRoute allowedRoles={['admin']}>
+              <Teams />
+            </PrivateRoute>
+          } />
+          <Route path="/leagues/:leagueName" element={
+            <PrivateRoute allowedRoles={['admin']}>
+              <DetailedLeaguePage />
+            </PrivateRoute>
+          } />
+          <Route path="/leagues" element={
+            <PrivateRoute allowedRoles={['admin']}>
+              <LeaguesPage />
+            </PrivateRoute>
+          } />
+          <Route path="/leagues/:leagueId/add-users" element={
+            <PrivateRoute allowedRoles={['admin']}>
+              <AddUserToLeague />
+            </PrivateRoute>
+          } />
+          {/* Additional protected routes as needed */}
+        </Routes>
+      </UserProvider>
     </Router>
   );
 }
