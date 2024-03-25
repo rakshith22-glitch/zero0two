@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
-import {Schema} from 'mongoose';
+import { Schema } from 'mongoose';
 const userSchema = new mongoose.Schema({
   firstname: { type: String, required: true },
   lastname: { type: String, required: true },
@@ -16,10 +16,16 @@ const userSchema = new mongoose.Schema({
     type: Schema.Types.ObjectId,
     ref: 'Team' // Ensure this matches your Team model name
   }],
+  duprRating: {
+    type: Number,
+    required: true,
+    min: 1.0, // Example minimum value
+    max: 8.0 // Example maximum value
+  }, // Adding the DUPR rating
 });
 
 // Hash password before saving
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function (next) {
   if (this.isModified('password')) {
     this.password = await bcrypt.hash(this.password, 8);
   }

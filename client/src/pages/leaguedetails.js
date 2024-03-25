@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Typography, Box, Card, CardContent, Grid, Container } from '@mui/material';
-import LeaguePlayers from '../components/leagueplayers'; // Adjust import path as necessary
-// Example icon
+import { Typography, Box, Card, CardContent, Grid, Container, CircularProgress } from '@mui/material';
+import LeagueTeams from '../components/leagueteams'; // Adjust the import path as necessary
 
 const DetailedLeaguePage = () => {
   const [leagueDetails, setLeagueDetails] = useState(null);
   const { leagueName } = useParams();
 
   useEffect(() => {
-    const fetchLeagueDetailsById = async () => {
+    const fetchLeagueDetailsByName = async () => {
       try {
-        const response = await fetch(`/api/leagues/by-name?leagueName=${encodeURIComponent(leagueName)}`);
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/leagues/by-name?leagueName=${encodeURIComponent(leagueName)}`);
         if (response.ok) {
           const data = await response.json();
           setLeagueDetails(data);
@@ -23,53 +22,48 @@ const DetailedLeaguePage = () => {
       }
     };
 
-    if (leagueName) fetchLeagueDetailsById();
+    if (leagueName) fetchLeagueDetailsByName();
   }, [leagueName]);
 
-  return (
-    <Container maxWidth="md">
-      <Box sx={{ marginTop: 4 }}>
-        {leagueDetails ? (
-          <Card elevation={3}>
-            <CardContent>
-              <Typography variant="h4" gutterBottom component="div">
-                {/* <SportsSoccerIcon sx={{ verticalAlign: 'middle', mr: 1 }} /> */}
-                {leagueDetails.leagueName}
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <Typography variant="body1">
-                    Day of the Week: {leagueDetails.dayOfWeek}
-                  </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  <Typography variant="body1">
-                    Time: {leagueDetails.time}
-                  </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  <Typography variant="body1">
-                    Team Composition: {leagueDetails.teamComposition}
-                  </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  <Typography variant="body1">
-                    Skill Level: {leagueDetails.skillLevel}
-                  </Typography>
-                </Grid>
-              </Grid>
-              <Box sx={{ mt: 3 }}>
-                <Typography variant="h6" gutterBottom>
-                  Players:
-                </Typography>
-                {leagueDetails.players && <LeaguePlayers players={leagueDetails.players} />}
-              </Box>
-            </CardContent>
-          </Card>
-        ) : (
-          <Typography variant="h5" textAlign="center">Loading...</Typography>
-        )}
+  if (!leagueDetails) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
       </Box>
+    );
+  }
+
+  return (
+    <Container maxWidth="md" sx={{ mt: 4 }}>
+      <Card elevation={3} sx={{ mb: 4 }}>
+        <CardContent sx={{ padding: { xs: 2, sm: 3, md: 4 } }}>
+          <Typography variant="h4" gutterBottom component="div" sx={{ fontWeight: 'bold', color: '#0277bd', mb: 3 }}>
+            {leagueDetails.leagueName}
+          </Typography>
+          <Grid container spacing={2}>
+            {/* League details presented in a structured and spaced manner */}
+            <Grid item xs={12} sm={6}>
+              <Typography variant="body1">Day of the Week: {leagueDetails.dayOfWeek}</Typography>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Typography variant="body1">Time: {leagueDetails.time}</Typography>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Typography variant="body1">Team Composition: {leagueDetails.teamComposition}</Typography>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Typography variant="body1">Skill Level: {leagueDetails.skillLevel}</Typography>
+            </Grid>
+          </Grid>
+          <Box sx={{ mt: 4 }}>
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 'medium', color: '#666' }}>
+              Teams:
+            </Typography>
+            {/* Teams component with its own styling */}
+            <LeagueTeams teams={leagueDetails.teams} />
+          </Box>
+        </CardContent>
+      </Card>
     </Container>
   );
 };

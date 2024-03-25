@@ -12,9 +12,9 @@ const leagueSchema = new Schema({
   time: String,
   teamComposition: String,
   skillLevel: String,
-  players: [{
+  teams: [{ // Changed from 'players' to 'teams'
     type: Schema.Types.ObjectId,
-    ref: 'User', // Change to 'Player' if using a separate Player model
+    ref: 'Team', // Assuming you have a Team model
   }],
 });
 

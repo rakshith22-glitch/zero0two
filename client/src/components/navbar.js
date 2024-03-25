@@ -16,7 +16,7 @@ const Navbar = () => {
     <AppBar position="sticky">
       <Toolbar>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          My Application
+        002
         </Typography>
         {user && (
           <Button color="inherit" onClick={handleLogout}>Logout</Button>

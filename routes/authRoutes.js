@@ -74,8 +74,8 @@ router.get('/leagues', async (req, res) => {
     }
 });
 
-router.post('/leagues/:leagueId/add-player', async (req, res) => {
-    const { playerId } = req.body;
+router.post('/leagues/:leagueId/add-team', async (req, res) => {
+    const { teamId } = req.body; // Changed from playerId to teamId
     const { leagueId } = req.params;
 
     try {
@@ -85,17 +85,18 @@ router.post('/leagues/:leagueId/add-player', async (req, res) => {
             return res.status(404).json({ message: 'League not found' });
         }
 
-        if (!league.players.includes(playerId)) {
-            league.players.push(playerId);
+        if (!league.teams.includes(teamId)) { // Changed from league.players.includes to league.teams.includes
+            league.teams.push(teamId); // Changed from league.players.push to league.teams.push
             await league.save();
             res.json(league);
         } else {
-            res.status(400).json({ message: 'Player already in league' });
+            res.status(400).json({ message: 'Team already in league' }); // Changed the message to refer to 'Team'
         }
     } catch (error) {
-        res.status(500).json({ message: 'Failed to add player to league', error });
+        res.status(500).json({ message: 'Failed to add team to league', error }); // Adjusted error message
     }
 });
+
 
 router.get('/leagues/by-name', async (req, res) => {
     try {
@@ -154,7 +155,7 @@ router.post('/teams', async (req, res) => {
     }
 });
 
-router.get('/getteams', async (req, res) => {
+router.get('/teams', async (req, res) => {
     try {
         const teams = await Team.find(); // Fetch all teams
         res.json(teams);
