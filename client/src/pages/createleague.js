@@ -22,12 +22,6 @@ const CreateLeagueForm = () => {
     participationFee: Yup.number().required('Required').positive('Must be positive'),
   });
 
-  //   const onSubmit = (values, { setSubmitting }) => {
-  //     console.log(values);
-  //     setSubmitting(false);
-  //     // Here you would typically make an API call to your server to create the league
-  //   };
-
   const onSubmit = (values, { setSubmitting, resetForm }) => {
     fetch(`${process.env.REACT_APP_API_URL}/api/leagues`, {
       method: 'POST',
