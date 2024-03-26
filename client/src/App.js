@@ -1,6 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import ProtectedRoute from './components/protectedroute'; // Ensure the path is correct
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Ensure the path is correct
 
 // Import your page components
 import Login from './pages/login';
