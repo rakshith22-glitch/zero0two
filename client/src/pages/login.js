@@ -28,7 +28,7 @@ function Login() {
       }
 
       // After a successful login, fetch session data including user role
-      const sessionResponse = await fetch(`https://zero0two-1.onrender.com/api/checkSession`, {
+      const sessionResponse = await fetch(`https://zero0two-1.onrender.com/api/session`, {
         credentials: 'include', // Necessary for session cookies
       });
 
@@ -42,7 +42,7 @@ function Login() {
         console.log('Session data:', user);
 
         // Redirect based on user role
-        navigate(user.role === 'admin' ? '/admin' : '/');
+        // navigate(user.role === 'admin' ? '/admin' : '/');
       } else {
         // Handle case where session check says not logged in
         setErrorMsg('Failed to establish a session. Please try logging in again.');
