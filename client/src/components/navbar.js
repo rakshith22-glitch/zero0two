@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button, AppBar, Toolbar, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
@@ -6,27 +6,6 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // useEffect(() => {
-  //   const checkSession = async () => {
-  //     try {
-  //       const sessionResponse = await fetch(`https://zero0two-1.onrender.com//api/checkSession`, {
-  //         credentials: 'include', // Necessary for session cookies
-  //       });
-
-  //       if (!sessionResponse.ok) {
-  //         throw new Error('Failed to fetch session data.');
-  //       }
-
-  //       const { isLoggedIn: sessionLoggedIn } = await sessionResponse.json();
-  //       setIsLoggedIn(sessionLoggedIn);
-  //     } catch (error) {
-  //       console.error('Session check error:', error);
-  //       setIsLoggedIn(false);
-  //     }
-  //   };
-
-  //   checkSession();
-  // }, []);
 
   const handleLogout = async () => {
     try {
