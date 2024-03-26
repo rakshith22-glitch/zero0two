@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, TextField, Autocomplete, Box, Typography, Snackbar, Alert, Card } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { useUser } from '../components/userContext';
+
 
 const CreateTeamPage = () => {
     const [teamName, setTeamName] = useState('');
@@ -11,13 +11,12 @@ const CreateTeamPage = () => {
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState('info');
     const navigate = useNavigate();
-    const { user } = useUser();
 
-    console.log(user)
+
     useEffect(() => {
         const fetchPlayers = async () => {
             try {
-                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users`);
+                const response = await fetch(`api/users`);
                 if (!response.ok) throw new Error('Failed to fetch players');
                 const data = await response.json();
                 setPlayers(data);
@@ -31,13 +30,11 @@ const CreateTeamPage = () => {
         fetchPlayers();
     }, []);
 
-  const handleCreateTeam = async () => {
-        // Assuming you have a way to retrieve the current user's ID
-        const currentUserId = user; // Replace this with actual logic to retrieve the current user's ID
+    const handleCreateTeam = async () => {
         const teamData = {
             name: teamName,
             players: selectedPlayers.map(p => p._id),
-            createdBy: currentUserId
+           
         };
 
         try {
@@ -63,6 +60,7 @@ const CreateTeamPage = () => {
             setOpenSnackbar(true);
         }
     };
+
     const handleCloseSnackbar = (event, reason) => {
         if (reason === 'clickaway') {
             return;
@@ -72,30 +70,93 @@ const CreateTeamPage = () => {
 
     return (
         <Box sx={{
+            marginTop: 8,
             display: 'flex',
-            justifyContent: 'center',
+            flexDirection: 'column',
             alignItems: 'center',
-            minHeight: '100vh',
+            padding: '20px',
+            borderRadius: '8px',
         }}>
-            <Card sx={{ minWidth: 275, width: '30%', p: 3 }}>
-                <Typography variant="h4" component="div" sx={{ mb: 2 }}>Create Team</Typography>
+            <Typography component="h1"
+                variant="h5"
+                sx={{
+                    color: '#0277bd', // Dark blue for contrast and readability
+                    marginBottom: '20px', // Space below the title for breathing room
+                }}>Create Team</Typography>
+            <Card
+                sx={{
+                    width: '100%', // Ensures the card extends to fit the container
+                    maxWidth: '350px', // Set to 350px to match the style
+                    padding: '20px',
+                    boxShadow: '0 4px 8px rgba(0,0,0,0.1)', // Subtle shadow for depth
+                    borderRadius: '8px', // Rounded corners for a softer look
+                    backgroundColor: '#ffffff', // Bright background to stand out
+                    display: 'flex', // Creates a flex container
+                    flexDirection: 'column', // Organizes children in a vertical column
+                    alignItems: 'center',
+                }}
+            >
                 <TextField
                     label="Team Name"
                     variant="outlined"
                     fullWidth
-                    sx={{ mb: 2 }}
+                    sx={{
+                        mb: 2, '& .MuiOutlinedInput-root': {
+                            '& fieldset': {
+                                borderColor: '#29b6f6',
+                            },
+                            '&:hover fieldset': {
+                                borderColor: '#0288d1',
+                            },
+                            '&.Mui-focused fieldset': {
+                                borderColor: '#0277bd',
+                            },
+                        }
+                    }}
                     value={teamName}
                     onChange={(e) => setTeamName(e.target.value)}
                 />
                 <Autocomplete
+                    fullWidth
                     multiple
                     options={players}
                     getOptionLabel={(option) => `${option.firstname} ${option.lastname}`}
                     onChange={(event, newValue) => setSelectedPlayers(newValue)}
-                    renderInput={(params) => <TextField {...params} variant="outlined" label="Add Players" />}
-                    sx={{ mb: 2 }}
+                    renderInput={(params) => <TextField {...params} variant="outlined" label="Add Players"
+                        sx={{
+                            '& .MuiOutlinedInput-root':
+                            {
+                                '& fieldset': {
+                                    borderColor: '#29b6f6',
+                                },
+                                '&:hover fieldset': {
+                                    borderColor: '#0288d1',
+                                },
+                                '&.Mui-focused fieldset': {
+                                    borderColor: '#0277bd',
+                                },
+                            },
+                            mb: 2,
+                        }
+                        } />}
                 />
-                <Button variant="contained" onClick={handleCreateTeam}>Create Team</Button>
+                <Button
+                    fullWidth
+                    variant="contained"
+                    onClick={handleCreateTeam}
+                    sx={{
+                        mt: 3,
+                        mb: 2,
+                        backgroundColor: '#66bb6a', // A vibrant green, matching the "Signup" button
+                        '&:hover': {
+                            backgroundColor: '#388e3c',
+                        },
+                        maxWidth: 350
+                    }}
+                >
+                    Create Team
+                </Button>
+
             </Card>
             <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
                 <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>

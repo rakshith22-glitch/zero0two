@@ -3,9 +3,85 @@ import User from '../models/User.js';
 import League from '../models/League.js';
 import Team from '../models/Team.js';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 
 const router = express.Router();
+
+router.post('/login', async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+        // Find the user by email
+        const user = await User.findOne({ email: email });
+
+        if (!user) {
+            return res.status(401).send({ message: 'Login failed. User not found.' });
+        }
+
+        // Compare the provided password with the hashed password in the database
+        const isMatch = await bcrypt.compare(password, user.password);
+
+        if (!isMatch) {
+            return res.status(401).send({ message: 'Login failed. Incorrect password.' });
+        }
+
+        // Authentication successful, store user ID in session
+        req.session.userId = user._id;
+        res.status(200).send({ message: 'Login successful' });
+    } catch (error) {
+        console.error('Login error:', error);
+        res.status(500).send({ message: 'Server error during login process.' });
+    }
+});
+
+router.post('/logout', (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            res.status(500).send({ message: 'Could not log out, please try again' });
+        } else {
+            res.send({ message: 'Logout successful' });
+        }
+    });
+});
+
+router.get('/session', (req, res) => {
+    if (req.session.userId) {
+      // Optionally, return more data about the user
+      res.status(200).json({ isLoggedIn: true, userId: req.session.userId });
+    } else {
+      res.status(200).json({ isLoggedIn: false });
+    }
+  });
+
+  router.get('/checkSession', async (req, res) => {
+    if (req.session.userId) {
+        try {
+            // Assuming you have a User model to fetch user details from the database
+            const user = await User.findById(req.session.userId).exec();
+
+            if (user) {
+                // Return relevant user details. Adjust the fields based on your User model.
+                res.status(200).json({
+                    isLoggedIn: true,
+                    user: {
+                        id: user._id,
+                        email: user.email,
+                        role: user.role,
+                        // Include any other user details you want to return
+                    }
+                });
+            } else {
+                // If the user ID in the session does not correspond to any user in the database
+                res.status(404).json({ isLoggedIn: false, message: "User not found" });
+            }
+        } catch (error) {
+            console.error('Session check failed:', error);
+            res.status(500).json({ isLoggedIn: false, message: "Failed to check session" });
+        }
+    } else {
+        res.status(200).json({ isLoggedIn: false });
+    }
+});
+
 
 router.post('/signup', async (req, res) => {
     const { firstname, lastname, email, password, role } = req.body; // Include username and optionally role
@@ -30,19 +106,7 @@ router.post('/signup', async (req, res) => {
         res.status(400).send({ message: 'Error creating user', error: error.message });
     }
 });
-router.post('/login', async (req, res) => {
-    const { email, password } = req.body;
-    try {
-        const user = await User.findOne({ email });
-        if (!user || !(await bcrypt.compare(password, user.password))) {
-            return res.status(401).send({ error: 'Login failed!' });
-        }
-        const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '24h' });
-        res.send({ user, token });
-    } catch (error) {
-        res.status(400).send(error);
-    }
-});
+
 
 router.get('/users', async (req, res) => {
     try {

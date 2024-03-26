@@ -49,7 +49,7 @@ const LeaguesPage = ({ role }) => {
     if (!team) return;
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/leagues/${leagueId}/add-team`, {
+      const response = await fetch(`api/leagues/${leagueId}/add-team`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ teamId: team._id }),

@@ -7,7 +7,7 @@ function HomePage() {
       <h1>Welcome to Our Application</h1>
       <p>Get started by checking out our leagues!</p>
       <div>
-        <Link to="/leagues">leagues</Link>
+        <Link to="/login">login</Link>
       </div>
     </div>
   );
