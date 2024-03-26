@@ -9,7 +9,7 @@ const Navbar = () => {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const sessionResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/checkSession`, {
+        const sessionResponse = await fetch(`https://zero0two-1.onrender.com//api/checkSession`, {
           credentials: 'include', // Necessary for session cookies
         });
 
