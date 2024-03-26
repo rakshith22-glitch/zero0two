@@ -23,47 +23,47 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/" element={<HomePage />} />
-        <Route 
-          path="/admin" 
+        <Route
+          path="/"
           element={
-            <ProtectedRoute allowedRoles={['admin']} component={AdminPage} />
-          } 
+            <AdminPage />
+          }
         />
-        <Route 
-          path="/createleague" 
+        <Route
+          path="/createleague"
           element={
-            <ProtectedRoute allowedRoles={['admin']} component={CreateLeagueForm} />
-          } 
+            <CreateLeagueForm />
+          }
         />
-        <Route 
-          path="/createteam" 
+        <Route
+          path="/createteam"
           element={
-            <ProtectedRoute allowedRoles={['admin']} component={CreateTeamPage} />
-          } 
+            <CreateTeamPage />
+          }
         />
-        <Route 
-          path="/teams" 
+        <Route
+          path="/teams"
           element={
-            <ProtectedRoute allowedRoles={['admin']} component={TeamsPage} />
-          } 
+            <TeamsPage />
+          }
         />
-        <Route 
-          path="/leagues/:leagueName" 
+        <Route
+          path="/leagues/:leagueName"
           element={
-            <ProtectedRoute allowedRoles={['admin']} component={DetailedLeaguePage} />
-          } 
+            <DetailedLeaguePage />
+          }
         />
-        <Route 
-          path="/leagues" 
+        <Route
+          path="/leagues"
           element={
-            <ProtectedRoute allowedRoles={['admin']} component={LeaguesPage} />
-          } 
+            <LeaguesPage />
+          }
         />
-        <Route 
-          path="/leagues/:leagueId/add-users" 
+        <Route
+          path="/leagues/:leagueId/add-users"
           element={
-            <ProtectedRoute allowedRoles={['admin']} component={AddUserToLeague} />
-          } 
+            <AddUserToLeague />
+          }
         />
         {/* Add more routes as needed */}
       </Routes>
