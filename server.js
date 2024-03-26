@@ -15,10 +15,7 @@ const PORT = process.env.PORT || 5000;
 
 
 app.use(express.json()); // Middleware to parse JSON bodies
-app.use(cors({
-  origin: 'https://fabulous-gnome-dd4e16.netlify.app/, http://localhost:3000', // Adjust according to your frontend's origin
-  credentials: true,
-}));
+app.use(cors());
 
 
 app.use(session({
