@@ -6,27 +6,27 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const sessionResponse = await fetch(`https://zero0two-1.onrender.com//api/checkSession`, {
-          credentials: 'include', // Necessary for session cookies
-        });
+  // useEffect(() => {
+  //   const checkSession = async () => {
+  //     try {
+  //       const sessionResponse = await fetch(`https://zero0two-1.onrender.com//api/checkSession`, {
+  //         credentials: 'include', // Necessary for session cookies
+  //       });
 
-        if (!sessionResponse.ok) {
-          throw new Error('Failed to fetch session data.');
-        }
+  //       if (!sessionResponse.ok) {
+  //         throw new Error('Failed to fetch session data.');
+  //       }
 
-        const { isLoggedIn: sessionLoggedIn } = await sessionResponse.json();
-        setIsLoggedIn(sessionLoggedIn);
-      } catch (error) {
-        console.error('Session check error:', error);
-        setIsLoggedIn(false);
-      }
-    };
+  //       const { isLoggedIn: sessionLoggedIn } = await sessionResponse.json();
+  //       setIsLoggedIn(sessionLoggedIn);
+  //     } catch (error) {
+  //       console.error('Session check error:', error);
+  //       setIsLoggedIn(false);
+  //     }
+  //   };
 
-    checkSession();
-  }, []);
+  //   checkSession();
+  // }, []);
 
   const handleLogout = async () => {
     try {

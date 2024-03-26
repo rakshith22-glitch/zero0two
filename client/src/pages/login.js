@@ -14,7 +14,7 @@ function Login() {
     e.preventDefault();
     try {
       // Perform the login request
-      const loginResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/login`, {
+      const loginResponse = await fetch(`https://zero0two-1.onrender.com/api/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -28,7 +28,7 @@ function Login() {
       }
 
       // After a successful login, fetch session data including user role
-      const sessionResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/checkSession`, {
+      const sessionResponse = await fetch(`https://zero0two-1.onrender.com/api/checkSession`, {
         credentials: 'include', // Necessary for session cookies
       });
 
