@@ -1,26 +1,43 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Card, Grid, CardContent, Typography, List, ListItem, CircularProgress } from '@mui/material';
+import { Box, Card, CardContent, Typography, Table, TableBody, TableCell, TableHead, TableRow, CircularProgress } from '@mui/material';
+import { styled } from '@mui/material/styles';
+const StyledTable = styled(Table)({
+    minWidth: 550,
+  });
+  
 
 const Teams = () => {
     const [teams, setTeams] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        const fetchLeaguesData = async (team) => {
+            const leaguesDataPromises = team.leagues.map(async (leagueId) => {
+                const leagueResponse = await fetch(`/api/leagues/${leagueId}`);
+                const leagueData = await leagueResponse.json();
+                return leagueData.leagueName;
+            });
+
+            const leaguesData = await Promise.all(leaguesDataPromises);
+            return leaguesData;
+        };
+
         const fetchTeamsAndPlayers = async () => {
             setLoading(true);
             try {
-                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/getteams`);
+                const response = await fetch(`/api/teams`);
                 if (!response.ok) throw new Error('Could not fetch teams');
                 let teamsData = await response.json();
 
-                // Fetch players details for each team concurrently
-                const teamsWithPlayers = await Promise.all(teamsData.map(async (team) => {
-                    const playersResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/teams/${team._id}/details`);
+                // Fetch players details and league names for each team concurrently
+                const teamsWithPlayersAndLeagues = await Promise.all(teamsData.map(async (team) => {
+                    const playersResponse = await fetch(`/api/teams/${team._id}/details`);
                     const playersData = await playersResponse.json();
-                    return { ...team, players: playersData.players };
+                    const leagueNames = await fetchLeaguesData(team);
+                    return { ...team, players: playersData.players, leagueNames };
                 }));
 
-                setTeams(teamsWithPlayers);
+                setTeams(teamsWithPlayersAndLeagues);
             } catch (error) {
                 console.error('Fetch error:', error);
             } finally {
@@ -40,29 +57,47 @@ const Teams = () => {
     }
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, m: 3 }}>
+        <Box
+            sx={{
+                marginTop: 8,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                padding: '20px',
+                gap: '20px', // Add gap between the cards
+            }}
+        >
             {teams.map((team) => (
-                <Card key={team.id} sx={{ minWidth: 275 }}>
+                <Card key={team._id} sx={{ width: '100%', maxWidth: '500px' }}>
                     <CardContent>
-                        
-                        <Typography variant="h5" component="div">
-                          {team.name}
+                        <Typography variant="h5" component="div" sx={{ color: '#0277bd', marginBottom: '20px' }}>
+                            {team.name}
                         </Typography>
-                    
-                        <List >
-                            {team.players.map((player, index) => (
-                                <ListItem key={player.id}>
-                                    <Grid container spacing={2}>
-                                    <Grid item xs={12}>
-                                        <Typography variant="body1"  sx={{ textTransform: 'uppercase' }}>Player {index + 1}: {player.firstname} {player.lastname}</Typography>
-                                        <Typography variant="body1">DUPR: 5.0</Typography>
-                                        </Grid>
-                                    </Grid>
-
-
-                                </ListItem>
-                            ))}
-                        </List>
+                        <Typography variant="subtitle1" gutterBottom>
+                            {team.leagueNames && team.leagueNames.length ? `Leagues: ${team.leagueNames.join(', ')}` : 'Not a part of any league'}
+                        </Typography>
+                        <StyledTable>
+                            <Table >
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>Player</TableCell>
+                                        <TableCell>DUPR</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {team.players.map((player, index) => (
+                                        <TableRow key={player._id}>
+                                            <TableCell>
+                                                {`${player.firstname} ${player.lastname}`}
+                                            </TableCell>
+                                            <TableCell>
+                                                5.0
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </StyledTable>
                     </CardContent>
 
                 </Card>

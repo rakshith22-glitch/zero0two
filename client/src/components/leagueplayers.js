@@ -3,23 +3,26 @@ import { List, ListItem, ListItemText, ListItemAvatar, Avatar, Typography, Box, 
 
 const LeaguePlayers = ({ players }) => {
   const [playerDetails, setPlayerDetails] = useState([]);
-
+console.log(players)
   useEffect(() => {
     const fetchPlayerDetails = async () => {
       const playerInfoPromises = players.map(playerId =>
-        fetch(`${process.env.REACT_APP_API_URL}/api/users/${playerId}`).then(response => response.json())
+        fetch(`/api/users/${playerId}`).then(response => response.json())
       );
 
       try {
         const playersInfo = await Promise.all(playerInfoPromises);
         setPlayerDetails(playersInfo);
+        console.log("player deatisl", playerDetails)
       } catch (error) {
         console.error('Error fetching player details:', error);
       }
     };
 
-    if (players.length) {
+
+    if (players) {
       fetchPlayerDetails();
+      console.log(playerDetails)
     }
   }, [players]);
 
@@ -36,7 +39,7 @@ const LeaguePlayers = ({ players }) => {
                 <ListItemAvatar>
                   <Avatar src={player.avatarUrl || ''} alt={`${player.firstname} ${player.lastname}`} /> {/* Assuming players have avatar URLs */}
                 </ListItemAvatar>
-                <ListItemText primary={`${player.firstname} ${player.lastname}`} secondary={`Player ID: ${player._id}`} />
+                <ListItemText primary={`${player.firstname} ${player.lastname}`} secondary={`Player ID: ${player._id}`}  />
               </ListItem>
             ))}
           </List>

@@ -25,7 +25,12 @@ const Navbar = () => {
   return (
     <AppBar position="sticky">
       <Toolbar>
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+        <Typography
+          variant="h6"
+          component="div"
+          sx={{ flexGrow: 1, cursor: 'pointer' }}
+          onClick={() => navigate('/')}
+        >
           002
         </Typography>
         {isLoggedIn ? (

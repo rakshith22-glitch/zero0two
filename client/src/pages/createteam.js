@@ -38,7 +38,7 @@ const CreateTeamPage = () => {
         };
 
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/teams`, {
+            const response = await fetch(`/api/teams`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(teamData),

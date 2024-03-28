@@ -7,12 +7,8 @@ const LeaguesPage = ({ role }) => {
   const [leagues, setLeagues] = useState([]);
   const [teams, setTeams] = useState([]);
   const [selectedTeams, setSelectedTeams] = useState({});
+  const [snackbars, setSnackbars] = useState({});
   const navigate = useNavigate();
-  const [snackbar, setSnackbar] = useState({
-    open: false,
-    message: '',
-    severity: 'success', // Can be 'error', 'warning', 'info', or 'success'
-  });
 
   useEffect(() => {
     const fetchLeaguesAndTeams = async () => {
@@ -43,7 +39,7 @@ const LeaguesPage = ({ role }) => {
       console.error('Error fetching teams:', error);
     }
   };
-  console.log(teams)
+
   const handleAddTeam = async (leagueId) => {
     const team = selectedTeams[leagueId];
     if (!team) return;
@@ -60,13 +56,13 @@ const LeaguesPage = ({ role }) => {
       }
 
       const message = 'Team added successfully';
-      setSnackbar({ open: true, message, severity: 'success' });
+      setSnackbars(prev => ({ ...prev, [leagueId]: { open: true, message, severity: 'success' } }));
       setSelectedTeams(prev => ({ ...prev, [leagueId]: null })); // Reset selection
 
       // Optionally refresh league or teams data here
     } catch (error) {
       console.error('Failed to add team to league:', error);
-      setSnackbar({ open: true, message: error.message, severity: 'error' });
+      setSnackbars(prev => ({ ...prev, [leagueId]: { open: true, message: error.message, severity: 'error' } }));
     }
   };
 
@@ -106,8 +102,6 @@ const LeaguesPage = ({ role }) => {
                 color="primary"
                 onClick={() => navigate(`/leagues/${league.leagueName}`)}
                 sx={{
-                 
-                 
                   borderColor: '#66bb6a',
                   color: '#66bb6a',
                   '&:hover': {
@@ -129,6 +123,7 @@ const LeaguesPage = ({ role }) => {
                 <Typography variant="body2" color="textSecondary" sx={{ textAlign: 'center' }}>
                   Time: {league.time}
                 </Typography>
+
                 <Typography variant="body2" color="textSecondary" sx={{ textAlign: 'center' }}>
                   Composition: {league.teamComposition}
                 </Typography>
@@ -139,7 +134,7 @@ const LeaguesPage = ({ role }) => {
               {role === 'admin' && (
                 <CardActions sx={{ justifyContent: 'center', width: '100%' }}>
                   <Autocomplete
-                    id="team-autocomplete"
+                    id={`team-autocomplete-${league._id}`}
                     options={teams}
                     getOptionLabel={(option) => option.name} // Assuming each team object has a 'name' property
                     onChange={(event, team) => handleChangeTeam(league._id, team)}
@@ -171,28 +166,29 @@ const LeaguesPage = ({ role }) => {
                   >
                     Add
                   </Button>
+                  <Snackbar
+                    open={snackbars[league._id]?.open || false}
+                    autoHideDuration={6000}
+                    onClose={() => setSnackbars(prev => ({ ...prev, [league._id]: { ...prev[league._id], open: false } }))}
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                  >
+                    <Alert
+                      onClose={() => setSnackbars(prev => ({ ...prev, [league._id]: { ...prev[league._id], open: false } }))}
+                      severity={snackbars[league._id]?.severity || 'success'}
+                      sx={{ width: '100%' }}
+                    >
+                      {snackbars[league._id]?.message || ''}
+                    </Alert>
+                  </Snackbar>
                 </CardActions>
               )}
             </Card>
           </Grid>
         ))}
       </Grid>
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={6000}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert
-          onClose={() => setSnackbar({ ...snackbar, open: false })}
-          severity={snackbar.severity}
-          sx={{ width: '100%' }}
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
     </Box>
   );
 };
 
 export default LeaguesPage;
+

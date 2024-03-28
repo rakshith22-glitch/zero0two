@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-    Box, Card, CardContent, Typography, Collapse, IconButton, Table, TableBody, TableCell, TableRow, TableHead, Avatar
-} from '@mui/material';
+import { Box, Card, CardContent, Typography, Collapse, IconButton, Table, TableBody, TableCell, TableRow, TableHead, Avatar, Grid, Alert } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { styled } from '@mui/material/styles';
 
@@ -18,19 +16,27 @@ const ExpandMore = styled((props) => {
 const LeagueTeams = ({ teams }) => {
     const [teamDetails, setTeamDetails] = useState([]);
     const [expanded, setExpanded] = useState({});
-
+    const [error, setError] = useState(null); // State to hold error message
+    console.log(teams)
     useEffect(() => {
         const fetchTeamDetails = async () => {
             // Assuming team details include player info
             const teamInfoPromises = teams.map(teamId =>
-                fetch(`${process.env.REACT_APP_API_URL}/api/teams/${teamId}/details`).then(response => response.json())
+                fetch(`/api/teams/${teamId}/details`).then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch team details');
+                    }
+                    return response.json();
+                })
             );
 
             try {
                 const teamsInfo = await Promise.all(teamInfoPromises);
                 setTeamDetails(teamsInfo);
+                setError(null); // Clear error if fetching succeeds
             } catch (error) {
                 console.error('Error fetching team details:', error);
+                setError('Failed to fetch team details. Please try again later.');
             }
         };
 
@@ -46,44 +52,43 @@ const LeagueTeams = ({ teams }) => {
         }));
     };
 
-
     return (
-        <Box sx={{ maxWidth: 800, mx: 'auto', my: 4 }}>
-            <Card variant="outlined">
-                <CardContent>
-                    <h2 component="div" gutterBottom>
-                        League Teams
-                    </h2>
-                    {teamDetails.map((team, index) => (
-                        <React.Fragment key={team._id}>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', my: 2 }}>
-                                <Typography variant="h6" sx={{ fontWeight: 'medium' }}>
-                                    {/* Prepend "Team" and the index + 1 before the team name */}
+        <Grid container spacing={3}>
+            {error && (
+                <Grid item xs={12}>
+                    <Alert severity="error">{error}</Alert>
+                </Grid>
+            )}
+            {teamDetails.map((team, index) => (
+                <Grid item xs={12} key={team._id}>
+                    <Card variant="outlined">
+                        <CardContent>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <Typography variant="h6" gutterBottom>
                                     Team {index + 1}: {team.name}
                                 </Typography>
-                                <ExpandMore
-                                    expand={expanded[team._id] || false}
+                                <IconButton
                                     onClick={() => handleExpandClick(team._id)}
                                     aria-expanded={expanded[team._id] || false}
                                     aria-label="show more"
                                 >
                                     <ExpandMoreIcon />
-                                </ExpandMore>
-                            </Box>
+                                </IconButton>
+                            </div>
                             <Collapse in={expanded[team._id] || false} timeout="auto" unmountOnExit>
-                                <Table size="small" aria-label="players">
+                                <Table size="small">
                                     <TableHead>
                                         <TableRow>
-                                            <TableCell><h3>Players </h3></TableCell>
-                                            <TableCell align="center"><h3>Details</h3></TableCell>
+                                            <TableCell>Player</TableCell>
+                                            <TableCell align="right">Details</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {team.players?.map((player, playerIndex) => (
+                                        {team.players?.map((player) => (
                                             <TableRow key={player._id}>
-                                                <TableCell component="th" scope="row">
+                                                <TableCell>
                                                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                                        <Avatar src={player.avatarUrl || ''} alt={`${player.firstname} ${player.lastname}`} sx={{ mr: 2 }} />
+                                                        <Avatar src={player.avatarUrl || ''} alt={`${player.firstname} ${player.lastname}`} sx={{ mr: 1 }} />
                                                         {`${player.firstname} ${player.lastname}`}
                                                     </Box>
                                                 </TableCell>
@@ -93,11 +98,11 @@ const LeagueTeams = ({ teams }) => {
                                     </TableBody>
                                 </Table>
                             </Collapse>
-                        </React.Fragment>
-                    ))}
-                </CardContent>
-            </Card>
-        </Box>
+                        </CardContent>
+                    </Card>
+                </Grid>
+            ))}
+        </Grid>
     );
 };
 
