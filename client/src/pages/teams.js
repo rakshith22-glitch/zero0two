@@ -13,7 +13,7 @@ const Teams = () => {
     useEffect(() => {
         const fetchLeaguesData = async (team) => {
             const leaguesDataPromises = team.leagues.map(async (leagueId) => {
-                const leagueResponse = await fetch(`/api/leagues/${leagueId}`);
+                const leagueResponse = await fetch(`https://zero0two-1.onrender.com/api/leagues/${leagueId}`);
                 const leagueData = await leagueResponse.json();
                 return leagueData.leagueName;
             });
@@ -25,13 +25,13 @@ const Teams = () => {
         const fetchTeamsAndPlayers = async () => {
             setLoading(true);
             try {
-                const response = await fetch(`/api/teams`);
+                const response = await fetch(`https://zero0two-1.onrender.com/api/teams`);
                 if (!response.ok) throw new Error('Could not fetch teams');
                 let teamsData = await response.json();
 
                 // Fetch players details and league names for each team concurrently
                 const teamsWithPlayersAndLeagues = await Promise.all(teamsData.map(async (team) => {
-                    const playersResponse = await fetch(`/api/teams/${team._id}/details`);
+                    const playersResponse = await fetch(`https://zero0two-1.onrender.com/api/teams/${team._id}/details`);
                     const playersData = await playersResponse.json();
                     const leagueNames = await fetchLeaguesData(team);
                     return { ...team, players: playersData.players, leagueNames };
