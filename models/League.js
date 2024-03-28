@@ -16,6 +16,10 @@ const leagueSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Team', // Assuming you have a Team model
   }],
+  players: [{ // Changed from 'players' to 'teams'
+    type: Schema.Types.ObjectId,
+    ref: 'User', // Assuming you have a Team model
+  }],
 });
 
 export default model('League', leagueSchema);

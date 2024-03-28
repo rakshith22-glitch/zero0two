@@ -119,6 +119,24 @@ router.get('/users', async (req, res) => {
     }
 });
 
+router.get('/users/:playerId', async (req, res) => {
+    try {
+        const { playerId } = req.params;
+
+        // Find the user by userId
+        const user = await User.findById(playerId);
+
+        if (!user) {
+            return res.status(404).send({ message: 'User not found' });
+        }
+
+        res.json(user);
+    } catch (error) {
+        console.error('Failed to fetch user by ID:', error);
+        res.status(500).send({ error: 'Failed to fetch user by ID' });
+    }
+});
+
 router.post('/leagues', async (req, res) => {
     try {
         const league = new League(req.body);
@@ -138,26 +156,17 @@ router.get('/leagues', async (req, res) => {
     }
 });
 
-router.post('/leagues/:leagueId/add-team', async (req, res) => {
-    const { teamId } = req.body; // Changed from playerId to teamId
+router.get('/leagues/:leagueId', async (req, res) => {
     const { leagueId } = req.params;
 
     try {
         const league = await League.findById(leagueId);
-
         if (!league) {
             return res.status(404).json({ message: 'League not found' });
         }
-
-        if (!league.teams.includes(teamId)) { // Changed from league.players.includes to league.teams.includes
-            league.teams.push(teamId); // Changed from league.players.push to league.teams.push
-            await league.save();
-            res.json(league);
-        } else {
-            res.status(400).json({ message: 'Team already in league' }); // Changed the message to refer to 'Team'
-        }
+        res.status(200).json(league);
     } catch (error) {
-        res.status(500).json({ message: 'Failed to add team to league', error }); // Adjusted error message
+        res.status(500).json({ message: 'Failed to fetch league details', error });
     }
 });
 
@@ -167,25 +176,23 @@ router.get('/leagues/by-name', async (req, res) => {
         const { leagueName } = req.query; // Get league name from query parameters
         if (!leagueName) {
             return res.status(400).send({ message: 'League Name is required.' });
-            console.log(res);
         }
 
         // Use findOne to search for a single document by leagueName
-        const leagueDetails = await League.findOne({ leagueName: leagueName });
-
+        const leagueDetails = await League.findOne({ name: leagueName }); // Change leagueName to name
 
         if (!leagueDetails) {
             return res.status(404).send({ message: 'League not found.' });
-            console.log(res);
         }
 
         res.json(leagueDetails);
     } catch (error) {
         console.error('Failed to fetch league details by name:', error);
         res.status(500).send({ message: 'Failed to fetch league details due to an error.' });
-        console.log(res);
     }
 });
+
+
 
 
 router.get('/users/:userId', async (req, res) => {
@@ -253,6 +260,70 @@ router.post('/teams/:teamId/join', async (req, res) => {
         res.json({ message: 'User added to team successfully', team: updatedTeam });
     } catch (error) {
         res.status(400).send({ message: 'Error adding user to team' });
+    }
+});
+
+
+router.post('/leagues/:leagueName/add-team', async (req, res) => {
+    const { teamName } = req.body; // Changed from playerId to teamName
+    const { leagueName } = req.params;
+
+    try {
+        // Find the league by leagueName
+        const league = await League.findOne({ leagueName });
+
+        if (!league) {
+            return res.status(404).json({ message: 'League not found' });
+        }
+
+        // Find the team by teamName
+        const team = await Team.findOne({ name: teamName });
+
+        if (!team) {
+            return res.status(404).json({ message: 'Team not found' });
+        }
+
+        // Check if the team is already in the league
+        if (!league.teams.includes(team._id)) {
+            league.teams.push(team._id); // Add team to league
+            await league.save();
+            res.json(league);
+        } else {
+            res.status(400).json({ message: 'Team already in league' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to add team to league', error });
+    }
+});
+
+router.post('/leagues/:leagueName/add-player', async (req, res) => {
+    const { playerId } = req.body; // Changed from teamName to playerId
+    const { leagueName } = req.params;
+
+    try {
+        // Find the league by leagueName
+        const league = await League.findOne({ leagueName });
+
+        if (!league) {
+            return res.status(404).json({ message: 'League not found' });
+        }
+
+        // Find the player by playerId
+        const player = await User.findById(playerId);
+
+        if (!player) {
+            return res.status(404).json({ message: 'Player not found' });
+        }
+        // Check if the player is already in the league
+        if (!league.players.includes(player._id)) {
+            league.players.push(player._id); // Add player to league
+            await league.save();
+            res.json(league);
+        } else {
+            res.status(400).json({ message: 'Player already in league' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to add player to league', error });
     }
 });
 

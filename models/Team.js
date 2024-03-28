@@ -10,10 +10,14 @@ const teamSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User'
   }],
+  leagues: [{
+    type: Schema.Types.ObjectId,
+    ref: 'League'
+  }], // Reference to the leagues the team is part of
   createdBy: {
     type: Schema.Types.ObjectId,
     ref: 'User',
-    required: true
+    required: false
   }
 }, {
   timestamps: true // Adds createdAt and updatedAt timestamps
